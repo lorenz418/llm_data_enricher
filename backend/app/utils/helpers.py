@@ -16,6 +16,20 @@ def extract_domain(url: str) -> str:
     except Exception:
         return ""
     
+def clean_text(text: str) -> str:
+    """
+    Clean text by removing extra whitespace and normalizing.
+    
+    Args:
+        text: Text to clean
+        
+    Returns:
+        Cleaned text
+    """
+    if not text:
+        return ""
+    return " ".join(text.strip().split())
+    
 
 def get_smartproxy_url(username: str, password: str, endpoint: str = "de.smartproxy.com", port: int = 20001) -> str:
     """

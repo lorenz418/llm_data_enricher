@@ -1,22 +1,9 @@
-from phonenumbers import format_number, parse, PhoneNumberFormat, is_valid_number
+from phonenumbers import format_number, parse, PhoneNumberFormat
 import re
 import urllib.parse
 import phonenumbers
 
-
 def format_german_phone(phone_string: str) -> str:
-    """
-    Format a German phone number to international format.
-    
-    Args:
-        phone_string: The phone number string to format
-        
-    Returns:
-        Formatted phone number string or empty string if invalid
-        
-    Raises:
-        ValueError: If phone number parsing fails
-    """
     if not phone_string:
         return ""
     
@@ -34,19 +21,43 @@ def format_german_phone(phone_string: str) -> str:
         return format_number(phone_number, PhoneNumberFormat.INTERNATIONAL)
     except Exception:
         return
+
+def validate_email(email: str) -> bool:
+    if not email:
+        return False
+    
+    # Basic email format validation
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(email_pattern, email))
+
+def validate_website(website: str) -> bool:
+    if not website:
+        return False
+    return bool(re.search(r'(www\.|https?://|\.(de|com|org|net))', website.lower()))
+
+def keys_match(data: dict, required_fields: list) -> bool:
+    return all(field in data for field in required_fields)
+
+def clean_scraped_results(scraped_results: list[dict]) -> list[dict]:
+    for result in scraped_results:
+        for key in result:
+            if not result[key] or len(result[key]) <= 2:
+                result[key] = None
+
+            if key.contains("phone") or key.contains("nummer"):
+                result[key] = format_german_phone(result[key])
+            
+            if key.contains("email") or key.contains("mail"):
+                if not validate_email(result[key]):
+                    result[key] = None
+
+            if key.contains("website") or key.contains("webseite"):
+                if not validate_website(result[key]):
+                    result[key] = None
+    
+    return scraped_results
     
 def build_google_maps_url(street: str, city: str, postal_code: str) -> str:
-    """
-    Build a Google Maps URL from address components.
-    
-    Args:
-        street: Street address
-        city: City name
-        postal_code: Postal code
-        
-    Returns:
-        Google Maps URL or empty string if address components are invalid
-    """
     if not all([street, city, postal_code]) or 'NA' in [street, city, postal_code]:
         return ""
         

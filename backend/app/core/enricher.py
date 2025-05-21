@@ -63,5 +63,6 @@ Given schema:
 }
 '''
 
-company_enricher("Agrargenossenschaft eG Calbe", DIRECTORY_SITES, PROMPT_SEARCH)
+if __name__ == "__main__":
+    print(company_enricher("Agrargenossenschaft eG Calbe", DIRECTORY_SITES, PROMPT_SEARCH))
 

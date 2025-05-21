@@ -23,6 +23,9 @@ async def process_csv(file: UploadFile = File(...)):
 
     return {"job_id": job_id}
 
+
+
+
 async def process_companies(companies, job_id):
     for i, row in enumerate(companies, start=1):
         company_name = row[0]  # Assuming first column is the company

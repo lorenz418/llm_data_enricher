@@ -124,7 +124,7 @@ def creditreform_scraper(link: str, prompt: str):
 
             context = browser.new_context(
                 user_agent=random.choice(USER_AGENTS),
-                viewport={"width": 320, "height": 240},
+                viewport={"width": 400, "height": 320},
                 proxy={
                     "server": proxy_url,
                     "username": PROXY_USERNAME,

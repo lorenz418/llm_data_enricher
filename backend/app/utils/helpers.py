@@ -32,8 +32,6 @@ def merge_scraped_results(scraped_results: list[dict]) -> dict:
         key=lambda search_result: (-search_result['relevance'], search_result['search_ranking'])
     )
 
-    print(sorted_scraped_results)
-
     for result in sorted_scraped_results:
         for key in merged_results:
             # Check if current value evaluates to False and new value evaluates to True

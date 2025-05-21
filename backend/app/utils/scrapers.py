@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
-from helpers import extract_domain, clean_text, filter_search_results, get_smartproxy_url, merge_scraped_results, clean_scraped_results, build_google_maps_url, keys_match
+from .helpers import extract_domain, get_smartproxy_url, merge_scraped_results
+from .formatters import clean_scraped_results, build_google_maps_url, keys_match
 from scrapegraphai.graphs import SmartScraperGraph
 import random
 import time
@@ -57,7 +58,7 @@ def search_company(search_query: str, relevant_domains: list[dict], max_results:
             'search_ranking': search_ranking + 1
         })
 
-    return filter_search_results(results, relevant_domains)
+    return results
 
 
 def scrape_company_data(search_result: list[dict], relevant_domains: list[dict], prompt: str) -> dict:
@@ -70,6 +71,8 @@ def scrape_company_data(search_result: list[dict], relevant_domains: list[dict],
             None
         )
 
+        if matching_domain is None:
+            continue
         if matching_domain['headless_parsing']:
             scraped_data = base_scraper(result['link'], prompt)
         else:
@@ -89,8 +92,8 @@ def scrape_company_data(search_result: list[dict], relevant_domains: list[dict],
         if keys_match(final_data, ['straße', 'ort', 'plz']):
             final_data['google_maps_url'] = build_google_maps_url(final_data['straße'], final_data['ort'], final_data['plz'])
 
-        if keys_match(final_data, ['street', 'location', 'postal_code']):
-            final_data['google_maps_url'] = build_google_maps_url(final_data['straße'], final_data['ort'], final_data['plz'])
+        if keys_match(final_data, ['street', 'city', 'postal_code']):
+            final_data['google_maps_url'] = build_google_maps_url(final_data['street'], final_data['city'], final_data['postal_code'])
 
     
     return final_data
@@ -121,7 +124,7 @@ def creditreform_scraper(link: str, prompt: str):
 
             context = browser.new_context(
                 user_agent=random.choice(USER_AGENTS),
-                viewport={"width": 200, "height": 150},
+                viewport={"width": 320, "height": 240},
                 proxy={
                     "server": proxy_url,
                     "username": PROXY_USERNAME,

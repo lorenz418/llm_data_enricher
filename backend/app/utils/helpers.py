@@ -19,19 +19,8 @@ def clean_text(text: str) -> str:
         return ""
     return " ".join(text.strip().split())
     
-
 def get_smartproxy_url(username: str, password: str, endpoint: str = "de.smartproxy.com", port: int = 20001) -> str:
     return f"https://{username}:{password}@{endpoint}:{port}"
-
-
-def filter_search_results(search_results: list[dict], relevant_domains: list[dict]) -> list[dict]:
-    filtered_results = []
-
-    for result in search_results:
-        if any(domain['domain'] in result['domain'] for domain in relevant_domains):
-            filtered_results.append(result)
-
-    return filtered_results
 
 def merge_scraped_results(scraped_results: list[dict]) -> dict:
     merged_results = {key: None for key in scraped_results[0]}

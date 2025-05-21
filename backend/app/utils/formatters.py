@@ -41,17 +41,20 @@ def keys_match(data: dict, required_fields: list) -> bool:
 def clean_scraped_results(scraped_results: list[dict]) -> list[dict]:
     for result in scraped_results:
         for key in result:
+            if key == "data_source" or key == "search_ranking" or key == "relevance":
+                continue
+        
             if not result[key] or len(result[key]) <= 2:
                 result[key] = None
 
-            if key.contains("phone") or key.contains("nummer"):
+            if "phone" in key or "nummer" in key:
                 result[key] = format_german_phone(result[key])
             
-            if key.contains("email") or key.contains("mail"):
+            if "email" in key or "mail" in key:
                 if not validate_email(result[key]):
                     result[key] = None
 
-            if key.contains("website") or key.contains("webseite"):
+            if "website" in key or "webseite" in key:
                 if not validate_website(result[key]):
                     result[key] = None
     
